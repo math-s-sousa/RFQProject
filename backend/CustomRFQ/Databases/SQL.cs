@@ -1,5 +1,6 @@
 ﻿using CustomRFQ.Models;
 using Dapper;
+using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.Data.SqlClient;
 using System.Data;
 
@@ -9,6 +10,7 @@ public class SQL : DB
 {
     public SqlConnection globalConnection;
     public override List<Database.Config> _dbs { get; set; }
+    public override Database.Smtp _smtp { get; set; }
 
     public SQL(string strConn)
     {
@@ -65,6 +67,8 @@ public class SQL : DB
         {
             _dbs = globalConnection.Query<Database.Config>("SELECT [BaseUrl], [DB], [Username], [Password] FROM [CUSTOM_RFQ].[dbo].[DbConfig]").ToList();
             _dbs.ForEach(a => a.SLApi = new(a.DB, a.Username, a.Password, a.BaseUrl));
+
+            _smtp = globalConnection.Query<Database.Smtp>("SELECT TOP 1 [Server], [Port], [SSL], [Host], [Password] FROM [CUSTOM_RFQ].[dbo].[SmtpConfig]").FirstOrDefault();
         }
         catch (Exception ex)
         {

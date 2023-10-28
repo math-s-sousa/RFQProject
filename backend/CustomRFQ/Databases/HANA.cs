@@ -5,6 +5,7 @@ namespace CustomRFQ.Databases;
 public class HANA : DB
 {
     public override List<Database.Config> _dbs { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public override Database.Smtp _smtp { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
     public override void LoadConfig()
     {

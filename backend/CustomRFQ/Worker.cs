@@ -7,6 +7,7 @@ public class Worker : BackgroundService
 {
     private readonly ILogger<Worker> _logger;
     private readonly Context _context;
+    private readonly Database.Smtp _smtp;
 
     public Worker(ILogger<Worker> logger, Context context)
     {
@@ -49,7 +50,7 @@ public class Worker : BackgroundService
 
                         using (Mailer mailer = new(_logger))
                         {
-                            Task.Run(() => mailer.Send(employee.E_Mail));
+                            Task.Run(() => mailer.Send(_context._conn._smtp, employee.E_Mail));
                         }
                     }
                 }

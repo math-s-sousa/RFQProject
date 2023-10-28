@@ -1,4 +1,5 @@
 ﻿using CustomRFQ.Utils;
+using System.Reflection.Metadata.Ecma335;
 
 namespace CustomRFQ.Models
 {
@@ -22,6 +23,15 @@ namespace CustomRFQ.Models
             public string Username { get; set; }
             public string Password { get; set; }
             public SLApi SLApi { get; set; }
+        }
+
+        public class Smtp
+        {
+            public string Server { get; set; }
+            public int Port { get; set; }
+            public bool SSL { get; set; }
+            public string Host { get; set; }
+            public string Password { get; set; }
         }
     }
 }
