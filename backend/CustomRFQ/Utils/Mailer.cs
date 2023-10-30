@@ -28,28 +28,27 @@ public class Mailer : IDisposable
             var mensagem = new MailMessage
             {
                 From = new MailAddress(smtp.Host),
-                Subject = "Assunto do Email",
-                Body = "Conteúdo do Email",
+                Subject = smtp.Subject,
+                IsBodyHtml = true,
+                Body = smtp.Body,
             };
 
             // Adicionar destinatários
-            mensagem.To.Add("matheus.silvasousa@hotmail.com");
+            mensagem.To.Add(toAddress);
 
             // Enviar o email
             smtpClient.Send(mensagem);
+
+            _logger.LogInformation("Email enviado!");
         }
         catch (Exception ex)
         {
             _logger.LogError(ex.Message);
         }
-        finally
-        {
-            _logger.LogInformation("Email enviado!");
-        }
     }
 
     public void Dispose()
     {
-        GC.SuppressFinalize(this);
+        GC.Collect();
     }
 }

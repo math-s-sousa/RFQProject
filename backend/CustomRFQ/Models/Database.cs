@@ -32,6 +32,8 @@ namespace CustomRFQ.Models
             public bool SSL { get; set; }
             public string Host { get; set; }
             public string Password { get; set; }
+            public string Subject { get; set; }
+            public string Body { get; set; }
         }
     }
 }

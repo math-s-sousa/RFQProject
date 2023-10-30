@@ -45,12 +45,12 @@ public class Worker : BackgroundService
                 {
                     foreach (var employee in employessObj.ContactEmployees)
                     {
-                        if (string.IsNullOrEmpty(employee.E_Mail) || string.IsNullOrEmpty(employee.U_RSD_CustomRFQ) || employee.U_RSD_CustomRFQ == "N")
-                            continue;
-
-                        using (Mailer mailer = new(_logger))
+                        if (!string.IsNullOrEmpty(employee.E_Mail) && employee.U_RSD_CustomRFQ == "Y")
                         {
-                            Task.Run(() => mailer.Send(_context._conn._smtp, employee.E_Mail));
+                            using (Mailer mailer = new(_logger))
+                            {
+                                Task.Run(() => mailer.Send(_context._conn._smtp, employee.E_Mail));
+                            }
                         }
                     }
                 }
