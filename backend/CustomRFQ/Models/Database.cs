@@ -34,6 +34,7 @@ namespace CustomRFQ.Models
             public string Password { get; set; }
             public string Subject { get; set; }
             public string Body { get; set; }
+            public string BaseUrl { get; set; }
         }
     }
 }

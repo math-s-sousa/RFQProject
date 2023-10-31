@@ -2,6 +2,7 @@
 using Dapper;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using System.Reflection.Metadata.Ecma335;
 
 namespace CustomRFQ.Databases;
 
@@ -90,5 +91,10 @@ public class SQL : DB
     public override IEnumerable<dynamic> Query(string query)
     {
         return globalConnection.Query(query);
+    }
+
+    public override int Execute(string query)
+    {
+        return globalConnection.Execute(query);
     }
 }

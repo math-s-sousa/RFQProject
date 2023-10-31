@@ -20,4 +20,9 @@ public class HANA : DB
     {
         throw new NotImplementedException();
     }
+
+    public override int Execute(string query)
+    {
+        throw new NotImplementedException();
+    }
 }

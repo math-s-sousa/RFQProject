@@ -51,6 +51,8 @@ public class Worker : BackgroundService
                             {
                                 Task.Run(() => mailer.Send(_context._conn._smtp, employee.E_Mail));
                             }
+
+                            _context._conn.Execute($"UPDATE \"EventSender\" SET \"Status\" = 'P', \"UpdateDate\" = '{DateTime.Now:yyyy-MM-dd hh:mm:ss}' WHERE \"Guid\" = '{item.Guid}'");
                         }
                     }
                 }
