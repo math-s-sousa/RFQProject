@@ -21,7 +21,7 @@ public class HANA : DB
         throw new NotImplementedException();
     }
 
-    public override int Execute(string query)
+    public override void UpdateEvent(string guid, char status)
     {
         throw new NotImplementedException();
     }

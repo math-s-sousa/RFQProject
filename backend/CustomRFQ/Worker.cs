@@ -22,7 +22,7 @@ public class Worker : BackgroundService
         {
             Process();
 
-            await Task.Delay(3000, stoppingToken);
+            await Task.Delay(30000, stoppingToken);
         }
     }
 
@@ -60,10 +60,10 @@ public class Worker : BackgroundService
 
                             using (Mailer mailer = new(_logger))
                             {
-                                Task.Run(() => mailer.Send(_context._conn._smtp, employee.E_Mail));
+                                Task.Run(() => mailer.Send(_context._conn._smtp, html, employee.E_Mail));
                             }
 
-                            _context._conn.Execute($"UPDATE \"EventSender\" SET \"Status\" = 'P', \"UpdateDate\" = '{DateTime.Now:yyyy-MM-dd hh:mm:ss}' WHERE \"Guid\" = '{item.Guid}'");
+                            _context._conn.UpdateEvent(item.Guid, 'P');
                         }
                     }
                 }

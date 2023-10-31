@@ -12,7 +12,7 @@ public class Mailer : IDisposable
         _logger = logger; 
     }
 
-    public void Send(Database.Smtp smtp, string toAddress)
+    public void Send(Database.Smtp smtp, string body, string toAddress)
     {
         try
         {
@@ -30,7 +30,7 @@ public class Mailer : IDisposable
                 From = new MailAddress(smtp.Host),
                 Subject = smtp.Subject,
                 IsBodyHtml = true,
-                Body = smtp.Body,
+                Body = body,
             };
 
             // Adicionar destinatários

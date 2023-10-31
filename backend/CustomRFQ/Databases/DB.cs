@@ -13,5 +13,5 @@ public abstract class DB
 
     public abstract IEnumerable<dynamic> Query(string query);
 
-    public abstract int Execute(string query);
+    public abstract void UpdateEvent(string guid, char status);
 }

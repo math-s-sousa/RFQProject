@@ -92,8 +92,8 @@ public class SQL : DB
         return globalConnection.Query(query);
     }
 
-    public override int Execute(string query)
+    public override void UpdateEvent(string guid, char status)
     {
-        return globalConnection.Execute(query);
+        globalConnection.Execute($"UPDATE EventSender SET Status = '{status}', UpdateDate = GETDATE() WHERE Guid = '{guid}'");
     }
 }
