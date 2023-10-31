@@ -94,6 +94,7 @@
                 public DateTime DocDate { get; set; }
                 public string CardName { get; set; }
                 public string CardCode { get; set; }
+                public int SalesPersonCode { get; set; }
                 public List<DocumentLine> DocumentLines { get; set; }
             }
         }
@@ -103,6 +104,7 @@
             // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
             public class ContactEmployee
             {
+                public string FirstName { get; set; }
                 public string E_Mail { get; set; }
                 public string U_RSD_CustomRFQ { get; set; } = "N";
             }
@@ -114,6 +116,15 @@
             }
 
 
+        }
+
+        public class SalesPersons
+        {
+            public class Value 
+            {
+                public string SalesEmployeeName { get; set; }
+                public object Email { get; set; }
+            }
         }
     }
 }
