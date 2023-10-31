@@ -1,7 +1,5 @@
 using CustomRFQ.Databases;
 using CustomRFQ.Models;
-using CustomRFQ.Utils;
-using Dapper;
 using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
