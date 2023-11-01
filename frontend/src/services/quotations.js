@@ -1,10 +1,7 @@
 import axios from "axios"
 
-const username = import.meta.env.VITE_APIUSER
-const password = import.meta.env.VITE_APIPASS
-
 // Codifique as credenciais para Base64
-const base64Credentials = btoa(`${username}:${password}`);
+const base64Credentials = btoa(`${import.meta.env.VITE_APIUSER}:${import.meta.env.VITE_APIPASS}`);
 
 // Configuração da solicitação com autenticação básica
 const config = {
