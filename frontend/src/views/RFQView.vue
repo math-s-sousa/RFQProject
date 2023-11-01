@@ -1,6 +1,7 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router'
+import { getQuotation, postQuotation } from '../services/quotations'
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 
@@ -9,39 +10,28 @@ const route = useRoute();
 
 const Document = ref(null);
 
-onMounted(() => {
-  getQuotation()
-})
+getData()
 
-function test() {
-  console.log(import.meta.env.VITE_APIHOST)
+async function test() {
+  console.log("test")
 }
 
-async function getQuotation() {
-  fetch(`${import.meta.env.VITE_APIHOST}/rfq/${route.params.id}`)
-  .then(res => res.json())
-  .then(json => {
-    Document.value = json
+async function getData() {
+  try {
+    const get = ref(await getQuotation(route.params.id))
+    Document.value = get.value.data
     Document.value.docDate = Document.value.docDate.substring(0,10)
-  })
-  .catch(err => {
+  }
+  catch(err) {
     router.push("/")
-  })
+  }
 }
 
-async function updateQuotation() {
-  let options = {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(Document.value)
-  };
+async function postData(document) {
+  try {
+    const post = ref(await postQuotation(route.params.id, document))
 
-  fetch(`${import.meta.env.VITE_APIHOST}/rfq/${route.params.id}`, options)
-  .then(res => res.json())
-  .then(data => {
-    if (data.status === 200) {
+    if (post.value.data.status === 200) {
       toast.success("Cotação atualizada!", {
         autoClose: 500,
         position: 'top-center',
@@ -49,20 +39,24 @@ async function updateQuotation() {
         hideProgressBar: true
       })
     }
-    
+
     else {
-      toast.error(data.detail, {
+      toast.error("Problemas ao enviar, favor contatar diretamente.", {
         autoClose: 3000,
         theme: 'colored',
         position: 'top-center',
         hideProgressBar: true
       })
     }
-  })
-  .catch(err => {
-    alert(err)
-    console.log(err)
-  })
+  }
+  catch(err) {
+    toast.error(err.response.data.detail, {
+      autoClose: 3000,
+      theme: 'colored',
+      position: 'top-center',
+      hideProgressBar: true
+      })
+  }
 }
 </script>
 
@@ -120,7 +114,7 @@ async function updateQuotation() {
 
     <div class="row d-flex justify-content-end" id="foot">
       <button class="btn btn-danger col-1 m-2" @click="test">Cancelar</button>
-      <button class="btn btn-success col-1 m-2" @click="updateQuotation">Enviar</button>
+      <button class="btn btn-success col-1 m-2" @click="postData(Document)">Enviar</button>
     </div>
   </div>
   <div v-else class="loading">
