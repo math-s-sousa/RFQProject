@@ -1,5 +1,6 @@
 ﻿using System.Net.Mail;
 using System.Net;
+using CustomRFQ.Models;
 
 namespace CustomRFQ.Utils;
 
@@ -11,31 +12,34 @@ public class Mailer : IDisposable
         _logger = logger; 
     }
 
-    public void Send(string toAddress)
+    public void Send(Database.Smtp smtp, string body, string toAddress)
     {
         try
         {
             // Configurar as credenciais SMTP e o servidor de email
-            var smtpClient = new SmtpClient("smtp.office365.com")
+            var smtpClient = new SmtpClient(smtp.Server)
             {
-                Port = 587,
-                Credentials = new NetworkCredential("email@aqui", "senha"),
-                EnableSsl = true
+                Port = smtp.Port,
+                Credentials = new NetworkCredential(smtp.Host, smtp.Password),
+                EnableSsl = smtp.SSL
             };
 
             // Criar uma mensagem de email
             var mensagem = new MailMessage
             {
-                From = new MailAddress("email@aqui"),
-                Subject = "Assunto do Email",
-                Body = "Conteúdo do Email",
+                From = new MailAddress(smtp.Host),
+                Subject = smtp.Subject,
+                IsBodyHtml = true,
+                Body = body,
             };
 
             // Adicionar destinatários
-            mensagem.To.Add("email@aqui");
+            mensagem.To.Add(toAddress);
 
             // Enviar o email
             smtpClient.Send(mensagem);
+
+            _logger.LogInformation("Email enviado!");
         }
         catch (Exception ex)
         {
@@ -45,6 +49,6 @@ public class Mailer : IDisposable
 
     public void Dispose()
     {
-        GC.SuppressFinalize(this);
+        GC.Collect();
     }
 }

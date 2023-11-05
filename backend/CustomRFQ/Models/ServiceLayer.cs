@@ -82,10 +82,10 @@
                 public int VisualOrder { get; set; }
                 public int LineNum { get; set; }
                 public string ItemDescription { get; set; }
+                public string ItemCode { get; set; }
                 public string FreeText { get; set; }
                 public double Quantity { get; set; }
                 public double UnitPrice { get; set; }
-                public string Currency { get; set; }
             }
 
             public class Value
@@ -94,6 +94,8 @@
                 public DateTime DocDate { get; set; }
                 public string CardName { get; set; }
                 public string CardCode { get; set; }
+                public string DocCurrency { get; set; }
+                public int SalesPersonCode { get; set; }
                 public List<DocumentLine> DocumentLines { get; set; }
             }
         }
@@ -103,6 +105,7 @@
             // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
             public class ContactEmployee
             {
+                public string FirstName { get; set; }
                 public string E_Mail { get; set; }
                 public string U_RSD_CustomRFQ { get; set; } = "N";
             }
@@ -114,6 +117,15 @@
             }
 
 
+        }
+
+        public class SalesPersons
+        {
+            public class Value 
+            {
+                public string SalesEmployeeName { get; set; }
+                public object Email { get; set; }
+            }
         }
     }
 }

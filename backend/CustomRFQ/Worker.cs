@@ -1,12 +1,14 @@
 ﻿using CustomRFQ.Databases;
 using CustomRFQ.Models;
 using CustomRFQ.Utils;
+using Microsoft.AspNetCore.Server.Kestrel.Transport.Quic;
 using System.Text.Json;
 
 public class Worker : BackgroundService
 {
     private readonly ILogger<Worker> _logger;
     private readonly Context _context;
+    private readonly Database.Smtp _smtp;
 
     public Worker(ILogger<Worker> logger, Context context)
     {
@@ -37,6 +39,9 @@ public class Worker : BackgroundService
                 var quotationObj = JsonSerializer.Deserialize<ServiceLayer.MarketingDocument.Value>(
                     slInstance.SLApi.Get($"PurchaseQuotations({item.DocEntry})").Result.success);
 
+                var salesPersonObj = JsonSerializer.Deserialize<ServiceLayer.SalesPersons.Value>(
+                    slInstance.SLApi.Get($"SalesPersons({quotationObj.SalesPersonCode})").Result.success);
+
                 var employessObj = JsonSerializer.Deserialize<ServiceLayer.BusinessPartner.Value>(
                     slInstance.SLApi.Get($"BusinessPartners('{quotationObj.CardCode}')").Result.success);
 
@@ -44,12 +49,21 @@ public class Worker : BackgroundService
                 {
                     foreach (var employee in employessObj.ContactEmployees)
                     {
-                        if (string.IsNullOrEmpty(employee.E_Mail) || string.IsNullOrEmpty(employee.U_RSD_CustomRFQ) || employee.U_RSD_CustomRFQ == "N")
-                            continue;
-
-                        using (Mailer mailer = new(_logger))
+                        if (!string.IsNullOrEmpty(employee.E_Mail) && employee.U_RSD_CustomRFQ == "Y")
                         {
-                            Task.Run(() => mailer.Send(employee.E_Mail));
+                            string html = _context._conn._smtp.Body;
+
+                            html = html.Replace("{{Vendor}}", employee.FirstName);
+                            html = html.Replace("{{Saler}}", salesPersonObj.SalesEmployeeName);
+                            html = html.Replace("{{Url}}", _context._conn._smtp.BaseUrl.EndsWith('/') ? 
+                                _context._conn._smtp.BaseUrl + item.Guid : _context._conn._smtp.BaseUrl + '/' + item.Guid);
+
+                            using (Mailer mailer = new(_logger))
+                            {
+                                Task.Run(() => mailer.Send(_context._conn._smtp, html, employee.E_Mail));
+                            }
+
+                            _context._conn.UpdateEvent(item.Guid, 'P');
                         }
                     }
                 }

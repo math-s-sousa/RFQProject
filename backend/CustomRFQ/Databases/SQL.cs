@@ -9,6 +9,7 @@ public class SQL : DB
 {
     public SqlConnection globalConnection;
     public override List<Database.Config> _dbs { get; set; }
+    public override Database.Smtp _smtp { get; set; }
 
     public SQL(string strConn)
     {
@@ -63,8 +64,10 @@ public class SQL : DB
     {
         try
         {
-            _dbs = globalConnection.Query<Database.Config>("SELECT [BaseUrl], [DB], [Username], [Password] FROM [CUSTOM_RFQ].[dbo].[DbConfig]").ToList();
+            _dbs = globalConnection.Query<Database.Config>("SELECT * FROM [DbConfig]").ToList();
             _dbs.ForEach(a => a.SLApi = new(a.DB, a.Username, a.Password, a.BaseUrl));
+
+            _smtp = globalConnection.Query<Database.Smtp>("SELECT TOP 1 * FROM [SmtpConfig]").FirstOrDefault();
         }
         catch (Exception ex)
         {
@@ -76,8 +79,7 @@ public class SQL : DB
     {
         try
         {
-            return globalConnection.Query<Database.EventSender>($"SELECT [Guid], [DocEntry], [ObjType], [DB], [CreateDate], [UpdateDate], [Status] " +
-            $"FROM [CUSTOM_RFQ].[dbo].[EventSender] WHERE [Guid] = '{guid}'").FirstOrDefault();
+            return globalConnection.Query<Database.EventSender>($"SELECT * FROM [EventSender] WHERE Guid = '{guid}'").FirstOrDefault();
         }
         catch (Exception ex)
         {
@@ -88,5 +90,10 @@ public class SQL : DB
     public override IEnumerable<dynamic> Query(string query)
     {
         return globalConnection.Query(query);
+    }
+
+    public override void UpdateEvent(string guid, char status)
+    {
+        globalConnection.Execute($"UPDATE EventSender SET Status = '{status}', UpdateDate = GETDATE() WHERE Guid = '{guid}'");
     }
 }

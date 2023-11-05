@@ -1,7 +1,7 @@
 using CustomRFQ.Databases;
 using CustomRFQ.Models;
-using CustomRFQ.Utils;
-using Dapper;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +9,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors();
 builder.Services.AddHostedService<Worker>();
 builder.Services.AddSingleton<Context>();
+
+builder.Services.AddAuthentication("BasicAuthentication")
+        .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", options => { });
+builder.Services.AddAuthorization();
 
 // Add services to the container.
 var app = builder.Build();
@@ -18,10 +22,13 @@ app.UseCors(builder => builder
 .AllowAnyMethod()
 .AllowAnyHeader());
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 // Configure the HTTP request pipeline.
 app.MapGet("/", () => "Hello World!");
 
-app.MapGet("/rfq/{id}", (string id, Context context) =>
+app.MapGet("/rfq/{id}", [Authorize] (string id, Context context) =>
 {
 	try
 	{
@@ -41,7 +48,7 @@ app.MapGet("/rfq/{id}", (string id, Context context) =>
 	}
 });
 
-app.MapPost("/rfq/{id}", (string id, ServiceLayer.MarketingDocument.Value body, Context context) =>
+app.MapPost("/rfq/{id}", [Authorize] (string id, ServiceLayer.MarketingDocument.Value body, Context context) =>
 {
 	try
 	{
@@ -58,19 +65,6 @@ app.MapPost("/rfq/{id}", (string id, ServiceLayer.MarketingDocument.Value body, 
 
 		else
 			return Results.Problem(patchQuotation.failed.error.message.value);
-	}
-	catch (Exception ex)
-	{
-		return Results.Problem(ex.Message);
-	}
-});
-
-app.MapPost("/migrate", () => {
-	try
-	{
-		//new Migrate(_sL);
-
-		return Results.NoContent();
 	}
 	catch (Exception ex)
 	{
