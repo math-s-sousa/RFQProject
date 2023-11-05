@@ -5,7 +5,7 @@
             <nav class="navbar bg-body-tertiary">
                 <div class="container-fluid">
                 <a class="navbar-brand">
-                    <img src="../assets/img/sap-business-one-logo-banner-caaf8db2.png" alt="Logo" width="180" height="45" class="d-inline-block align-text-top">
+                    <img src="../assets/img/logo.png" alt="Logo" width="180" height="45" class="d-inline-block align-text-top">
                     <span class="m-3" id="title">Cotação Online</span>
                 </a>
                 </div>
