@@ -18,5 +18,8 @@ export default defineNuxtConfig({
     apiBaseUrl: process.env.API_BASE_URL,
     apiUser: process.env.API_USERNAME,
     apiPass: process.env.API_PASSWORD
+  },
+  nitro: {
+    preset: "iis-handler"
   }
 })
