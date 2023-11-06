@@ -13,5 +13,10 @@ export default defineNuxtConfig({
         }
       ]
     }
+  },
+  runtimeConfig: {
+    apiBaseUrl: process.env.API_BASE_URL,
+    apiUser: process.env.API_USERNAME,
+    apiPass: process.env.API_PASSWORD
   }
 })

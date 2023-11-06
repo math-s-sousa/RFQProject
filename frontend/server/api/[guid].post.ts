@@ -1,14 +1,16 @@
 export default defineEventHandler(async (event) => {
 
+    const config = useRuntimeConfig()
+
     const guid = getRouterParam(event, 'guid')
     const body = await readBody(event)
 
-    const uri = `http://localhost:6060/rfq/${guid}`
+    const uri = `${config.apiBaseUrl}/rfq/${guid}`
 
     const data = await $fetch(uri, {
         method: 'POST',
         headers: {
-            Authorization: 'Basic Q1VTVE9NUkZROjEyMzQ='
+            Authorization: `Basic ${btoa(config.apiUser + ':' + config.apiPass)}`
         },
         body: body
     })
