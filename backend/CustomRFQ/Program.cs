@@ -61,7 +61,7 @@ app.MapPost("/rfq/{id}", [Authorize] (string id, ServiceLayer.MarketingDocument.
 		var patchQuotation = slInstance.SLApi.Patch($"PurchaseQuotations({eventObject.DocEntry})", JsonSerializer.Serialize(pLoad)).Result;
 
 		if (patchQuotation.success)
-			return Results.Ok(new { Status = 200, detail = "updated"});
+			return Results.Ok(new { status = 200, detail = "updated"});
 
 		else
 			return Results.Problem(patchQuotation.failed.error.message.value);
