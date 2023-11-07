@@ -38,11 +38,11 @@
                     <tr v-for="line in Document.documentLines">
                         <th scope="row">{{ line.visualOrder + 1 }}</th>
                         <td>{{ line.itemDescription }}</td>
-                        <td><input class="form-control" type="number" v-model="line.quantity"></td>
+                        <td><input class="form-control" type="number" min="1" step="any" v-model="line.quantity"></td>
                         <td>
                         <div class="input-group">
                             <span class="input-group-text">{{ Document.docCurrency }}</span>
-                            <input class="form-control" type="number" v-model="line.unitPrice">
+                            <input class="form-control" type="number" min="1" step="any" v-model="line.unitPrice">
                         </div>
                         </td>
                         <td><input class="form-control" type="text" v-model="line.freeText"></td>
@@ -93,8 +93,8 @@
         }
     }
 
-    const onSubmit = () => {
-        console.log("form enviado")
+    const onSubmit = async () => {
+        await updateQuotation()
     }
 
 </script>
