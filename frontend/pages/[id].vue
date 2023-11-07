@@ -11,50 +11,51 @@
                 </div>
             </nav>
             </div>
+            <form @submit.prevent="onSubmit">
+                <div class="row mt-1" id="head">
+                    <div class="col-6 mt-3">
+                        <label class="form-label">Fornecedor</label>
+                        <input type="text" class="form-control" alt="Fornecedor" v-model="Document.cardName" disabled>
+                    </div>  
+                    <div class="col-6 mt-3 mb-3">
+                        <label class="form-label">Data do Documento</label>
+                        <input type="date" class="form-control" alt="Data Documento" v-model="Document.docDate" disabled>
+                    </div>      
+                </div>
+                
+                <div class="row mt-1" id="lines">
+                <table class="table mt-1">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Item</th>
+                        <th scope="col">Quantidade</th>
+                        <th scope="col">Preço Unitário</th>
+                        <th scope="col">Observações</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="line in Document.documentLines">
+                        <th scope="row">{{ line.visualOrder + 1 }}</th>
+                        <td>{{ line.itemDescription }}</td>
+                        <td><input class="form-control" type="number" v-model="line.quantity"></td>
+                        <td>
+                        <div class="input-group">
+                            <span class="input-group-text">{{ Document.docCurrency }}</span>
+                            <input class="form-control" type="number" v-model="line.unitPrice">
+                        </div>
+                        </td>
+                        <td><input class="form-control" type="text" v-model="line.freeText"></td>
+                    </tr>
+                    </tbody>
+                </table>
+                </div>
 
-            <div class="row mt-1" id="head">
-            <div class="col-6 mt-3">
-                <label class="form-label">Fornecedor</label>
-                <input type="text" class="form-control" alt="Fornecedor" v-model="Document.cardName" disabled>
-            </div>  
-            <div class="col-6 mt-3 mb-3">
-                <label class="form-label">Data do Documento</label>
-                <input type="date" class="form-control" alt="Data Documento" v-model="Document.docDate" disabled>
-            </div>  
-            </div>
-            
-            <div class="row mt-1" id="lines">
-            <table class="table mt-1">
-                <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Item</th>
-                    <th scope="col">Quantidade</th>
-                    <th scope="col">Preço Unitário</th>
-                    <th scope="col">Observações</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr v-for="line in Document.documentLines">
-                    <th scope="row">{{ line.visualOrder + 1 }}</th>
-                    <td>{{ line.itemDescription }}</td>
-                    <td><input class="form-control" type="number" v-model="line.quantity"></td>
-                    <td>
-                    <div class="input-group">
-                        <span class="input-group-text">{{ Document.docCurrency }}</span>
-                        <input class="form-control" type="number" v-model="line.unitPrice">
-                    </div>
-                    </td>
-                    <td><input class="form-control" type="text" v-model="line.freeText"></td>
-                </tr>
-                </tbody>
-            </table>
-            </div>
-
-            <div class="row d-flex justify-content-end" id="foot">
-                <button class="btn btn-danger col-1 m-2">Cancelar</button>
-                <button class="btn btn-success col-1 m-2" @click="updateQuotation">Enviar</button>
-            </div>
+                <div class="row d-flex justify-content-end" id="foot">
+                    <button type="button" class="btn btn-danger col-1 m-2">Cancelar</button>
+                    <button type="submit" class="btn btn-success col-1 m-2">Enviar</button>
+                </div>
+            </form>
         </div>
         <div v-else class="loading">
             Carregando...
@@ -91,6 +92,11 @@
             })
         }
     }
+
+    const onSubmit = () => {
+        console.log("form enviado")
+    }
+
 </script>
 
 <style scoped>
