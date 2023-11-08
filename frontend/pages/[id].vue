@@ -1,6 +1,7 @@
 <template>
     <div>
-        <div class="container mt-5 rounded" v-if="!dataLoaded">
+        <Loading v-if="loading" />
+        <div class="container mt-5 rounded">
             <div class="row">
             <nav class="navbar bg-body-tertiary">
                 <div class="container-fluid">
@@ -57,9 +58,6 @@
                 </div>
             </form>
         </div>
-        <div v-else class="loading">
-            Carregando...
-        </div>
     </div>
 </template>
 
@@ -68,8 +66,9 @@
     import 'vue3-toastify/dist/index.css';
 
     const { id } = useRoute().params
+    const loading = ref(false)
 
-    const { data: Document, pending:dataLoaded } = await useFetch(`/api/${id}`)
+    const { data: Document } = await useFetch(`/api/${id}`)
     Document.value.docDate = Document.value.docDate.substring(0,10)
 
     const updateQuotation = async () => {
@@ -94,7 +93,9 @@
     }
 
     const onSubmit = async () => {
+        loading.value = true
         await updateQuotation()
+        loading.value = false
     }
 
 </script>
