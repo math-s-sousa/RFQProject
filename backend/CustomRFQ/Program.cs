@@ -32,6 +32,7 @@ app.MapGet("/rfq/{id}", [Authorize] (string id, Context context) =>
 {
 	try
 	{
+
 		var eventObject = context._conn.GetEvent(id);
 
 		var slInstance = context._conn._dbs.Where(a => a.DB == eventObject.DB).FirstOrDefault();
@@ -61,7 +62,10 @@ app.MapPost("/rfq/{id}", [Authorize] (string id, ServiceLayer.MarketingDocument.
 		var patchQuotation = slInstance.SLApi.Patch($"PurchaseQuotations({eventObject.DocEntry})", JsonSerializer.Serialize(pLoad)).Result;
 
 		if (patchQuotation.success)
+		{
+            new ServiceLayer.Messages.Root().SendAlert(eventObject.UserCode, body.DocEntry.ToString(), body.DocNum.ToString(), slInstance);
 			return Results.Ok(new { status = 200, detail = "updated"});
+        }
 
 		else
 			return Results.Problem(patchQuotation.failed.error.message.value);
