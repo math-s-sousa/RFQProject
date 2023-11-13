@@ -64,6 +64,7 @@ app.MapPost("/rfq/{id}", [Authorize] (string id, ServiceLayer.MarketingDocument.
 		if (patchQuotation.success)
 		{
             new ServiceLayer.Messages.Root().SendAlert(eventObject.UserCode, body.DocEntry.ToString(), body.DocNum.ToString(), slInstance);
+			context._conn.UpdateEvent(id, 'C');
 			return Results.Ok(new { status = 200, detail = "updated"});
         }
 
