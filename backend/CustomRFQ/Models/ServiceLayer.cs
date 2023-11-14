@@ -1,4 +1,6 @@
-﻿namespace CustomRFQ.Models
+﻿using System.Text.Json;
+
+namespace CustomRFQ.Models
 {
     public class ServiceLayer
     {
@@ -91,6 +93,7 @@
             public class Value
             {
                 public int DocEntry { get; set; }
+                public int DocNum { get; set; }
                 public DateTime DocDate { get; set; }
                 public string CardName { get; set; }
                 public string CardCode { get; set; }
@@ -102,7 +105,6 @@
 
         public class BusinessPartner
         {
-            // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
             public class ContactEmployee
             {
                 public string FirstName { get; set; }
@@ -125,6 +127,76 @@
             {
                 public string SalesEmployeeName { get; set; }
                 public object Email { get; set; }
+            }
+        }
+
+        public class Messages
+        {
+            public class MessageDataColumn
+            {
+                public string ColumnName { get; set; }
+                public string Link { get; set; }
+                public List<MessageDataLine> MessageDataLines { get; set; }
+            }
+
+            public class MessageDataLine
+            {
+                public string Object { get; set; }
+                public string ObjectKey { get; set; }
+                public string Value { get; set; }
+            }
+
+            public class RecipientCollection
+            {
+                public string SendInternal { get; set; }
+                public string UserCode { get; set; }
+            }
+
+            public class Root
+            {
+                public Root()
+                {
+                    Subject = "Cotação Online - Atualizada";
+                    Text = "A seguinte Cotação Online foi atualizada pelo fornecedor.";
+
+                    MessageDataColumns = new()
+                    {
+                        new MessageDataColumn
+                        {
+                            ColumnName = "Documento",
+                            Link = "tYES",
+                            MessageDataLines = new()
+                            {
+                                new MessageDataLine
+                                {
+                                    Object = "540000006"
+                                }
+                            }
+                        }
+                    };
+
+                    RecipientCollection = new()
+                    {
+                        new RecipientCollection
+                        {
+                            SendInternal = "tYES"
+                        }
+                    };
+                }
+
+                public List<MessageDataColumn> MessageDataColumns { get; set; }
+                public List<RecipientCollection> RecipientCollection { get; set; }
+                public string Subject { get; set; }
+                public string Text { get; set; }
+
+                public void SendAlert(string userCode, string docEntry, string docNum, Database.Config sL)
+                {
+                    this.MessageDataColumns[0].MessageDataLines[0].ObjectKey = docEntry;
+                    this.MessageDataColumns[0].MessageDataLines[0].Value = docNum;
+                    this.RecipientCollection[0].UserCode = userCode;
+
+                    sL.SLApi.Post("Messages", JsonSerializer.Serialize(this)).Wait();
+                }
             }
         }
     }

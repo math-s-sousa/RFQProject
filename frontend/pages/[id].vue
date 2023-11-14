@@ -1,63 +1,62 @@
 <template>
     <div>
-        <div class="container mt-5 rounded" v-if="!dataLoaded">
+        <Loading v-if="loading" />
+        <div class="container mt-5 rounded">
             <div class="row">
             <nav class="navbar bg-body-tertiary">
                 <div class="container-fluid">
                 <a class="navbar-brand">
-                    <img src="../assets/img/sap-business-one-logo-banner-caaf8db2.png" alt="Logo" width="180" height="45" class="d-inline-block align-text-top">
+                    <img src="../assets/img/logo.png" alt="Logo" width="180" height="45" class="d-inline-block align-text-top">
                     <span class="m-3" id="title">Cotação Online</span>
                 </a>
                 </div>
             </nav>
             </div>
+            <form @submit.prevent="onSubmit">
+                <div class="row mt-1" id="head">
+                    <div class="col-6 mt-3">
+                        <label class="form-label">Fornecedor</label>
+                        <input type="text" class="form-control" alt="Fornecedor" v-model="Document.cardName" disabled>
+                    </div>  
+                    <div class="col-6 mt-3 mb-3">
+                        <label class="form-label">Data do Documento</label>
+                        <input type="date" class="form-control" alt="Data Documento" v-model="Document.docDate" disabled>
+                    </div>      
+                </div>
+                
+                <div class="row mt-1" id="lines">
+                <table class="table mt-1">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Item</th>
+                        <th scope="col">Quantidade</th>
+                        <th scope="col">Preço Unitário</th>
+                        <th scope="col">Observações</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="line in Document.documentLines">
+                        <th scope="row">{{ line.visualOrder + 1 }}</th>
+                        <td>{{ line.itemDescription }}</td>
+                        <td><input class="form-control" type="number" min="1" step="any" v-model="line.quantity"></td>
+                        <td>
+                        <div class="input-group">
+                            <span class="input-group-text">{{ Document.docCurrency }}</span>
+                            <input class="form-control" type="number" min="1" step="any" v-model="line.unitPrice">
+                        </div>
+                        </td>
+                        <td><input class="form-control" type="text" v-model="line.freeText"></td>
+                    </tr>
+                    </tbody>
+                </table>
+                </div>
 
-            <div class="row mt-1" id="head">
-            <div class="col-6 mt-3">
-                <label class="form-label">Fornecedor</label>
-                <input type="text" class="form-control" alt="Fornecedor" v-model="Document.cardName" disabled>
-            </div>  
-            <div class="col-6 mt-3 mb-3">
-                <label class="form-label">Data do Documento</label>
-                <input type="date" class="form-control" alt="Data Documento" v-model="Document.docDate" disabled>
-            </div>  
-            </div>
-            
-            <div class="row mt-1" id="lines">
-            <table class="table mt-1">
-                <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Item</th>
-                    <th scope="col">Quantidade</th>
-                    <th scope="col">Preço Unitário</th>
-                    <th scope="col">Observações</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr v-for="line in Document.documentLines">
-                    <th scope="row">{{ line.visualOrder + 1 }}</th>
-                    <td>{{ line.itemDescription }}</td>
-                    <td><input class="form-control" type="number" v-model="line.quantity"></td>
-                    <td>
-                    <div class="input-group">
-                        <span class="input-group-text">{{ Document.docCurrency }}</span>
-                        <input class="form-control" type="number" v-model="line.unitPrice">
-                    </div>
-                    </td>
-                    <td><input class="form-control" type="text" v-model="line.freeText"></td>
-                </tr>
-                </tbody>
-            </table>
-            </div>
-
-            <div class="row d-flex justify-content-end" id="foot">
-                <button class="btn btn-danger col-1 m-2">Cancelar</button>
-                <button class="btn btn-success col-1 m-2" @click="updateQuotation">Enviar</button>
-            </div>
-        </div>
-        <div v-else class="loading">
-            Carregando...
+                <div class="row d-flex justify-content-end" id="foot">
+                    <button type="button" class="btn btn-danger col-1 m-2">Cancelar</button>
+                    <button type="submit" class="btn btn-success col-1 m-2">Enviar</button>
+                </div>
+            </form>
         </div>
     </div>
 </template>
@@ -67,8 +66,9 @@
     import 'vue3-toastify/dist/index.css';
 
     const { id } = useRoute().params
+    const loading = ref(false)
 
-    const { data: Document, pending:dataLoaded } = await useFetch(`/api/${id}`)
+    const { data: Document } = await useFetch(`/api/${id}`)
     Document.value.docDate = Document.value.docDate.substring(0,10)
 
     const updateQuotation = async () => {
@@ -91,6 +91,13 @@
             })
         }
     }
+
+    const onSubmit = async () => {
+        loading.value = true
+        await updateQuotation()
+        loading.value = false
+    }
+
 </script>
 
 <style scoped>

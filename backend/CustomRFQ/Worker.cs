@@ -1,7 +1,6 @@
 ﻿using CustomRFQ.Databases;
 using CustomRFQ.Models;
 using CustomRFQ.Utils;
-using Microsoft.AspNetCore.Server.Kestrel.Transport.Quic;
 using System.Text.Json;
 
 public class Worker : BackgroundService
@@ -30,7 +29,7 @@ public class Worker : BackgroundService
     {
         try
         {
-            var getNewEvents = _context._conn.Query("SELECT * FROM \"EventSender\" WHERE \"Status\" = 'N'");
+            var getNewEvents = _context._conn.Query("SELECT * FROM \"EventSender\" WHERE \"Status\" = 'N' AND \"ObjType\" = 540000006");
 
             foreach (var item in getNewEvents)
             {
