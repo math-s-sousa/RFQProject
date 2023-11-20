@@ -1,6 +1,6 @@
 USE [master]
 GO
-/****** Object:  Database [CUSTOM_RFQ]    Script Date: 14/11/2023 18:22:44 ******/
+/****** Object:  Database [CUSTOM_RFQ]    Script Date: 20/11/2023 17:56:19 ******/
 CREATE DATABASE [CUSTOM_RFQ]
  CONTAINMENT = NONE
  ON  PRIMARY 
@@ -77,7 +77,7 @@ ALTER DATABASE [CUSTOM_RFQ] SET QUERY_STORE = OFF
 GO
 USE [CUSTOM_RFQ]
 GO
-/****** Object:  Table [dbo].[DbConfig]    Script Date: 14/11/2023 18:22:44 ******/
+/****** Object:  Table [dbo].[DbConfig]    Script Date: 20/11/2023 17:56:19 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -89,7 +89,7 @@ CREATE TABLE [dbo].[DbConfig](
 	[Password] [nvarchar](100) NOT NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[EventSender]    Script Date: 14/11/2023 18:22:44 ******/
+/****** Object:  Table [dbo].[EventSender]    Script Date: 20/11/2023 17:56:19 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -105,7 +105,7 @@ CREATE TABLE [dbo].[EventSender](
 	[UserCode] [nvarchar](10) NOT NULL
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[SmtpConfig]    Script Date: 14/11/2023 18:22:44 ******/
+/****** Object:  Table [dbo].[SmtpConfig]    Script Date: 20/11/2023 17:56:19 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -120,6 +120,47 @@ CREATE TABLE [dbo].[SmtpConfig](
 	[Body] [nvarchar](max) NOT NULL,
 	[BaseUrl] [nvarchar](50) NOT NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  StoredProcedure [dbo].[CreateEvent]    Script Date: 20/11/2023 17:56:19 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE procedure [dbo].[CreateEvent] @docEntry int, @objType int, @db nvarchar(80)
+as
+
+if @objType = 540000006
+begin
+	declare @query nvarchar(500)
+	declare @params nvarchar(500) = '@userCodeOut nvarchar(50) OUTPUT'
+	declare @userCode nvarchar(50)
+
+	set @query = 'select @userCodeOut = OUSR.USER_CODE from [' + @db + ']..OPQT 
+	inner join [' + @db + ']..OUSR on OUSR.USERID = OPQT.UserSign
+	where DocEntry = ' + CAST(@docEntry as varchar)
+
+	exec sp_executesql @query, @params, @userCodeOut = @userCode output
+
+	INSERT INTO [dbo].[EventSender]
+           ([Guid]
+           ,[DocEntry]
+           ,[ObjType]
+           ,[DB]
+           ,[CreateDate]
+           ,[UpdateDate]
+           ,[Status]
+           ,[UserCode])
+     VALUES
+           (NEWID()
+           ,@docEntry
+           ,@objType
+           ,@db
+           ,GETDATE()
+           ,null
+           ,'N'
+           ,@userCode)
+end
 GO
 USE [master]
 GO
