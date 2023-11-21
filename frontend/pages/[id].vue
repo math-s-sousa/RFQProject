@@ -112,17 +112,11 @@
     }
 
     #foot {
-        text-align: end;
+    text-align: end;
     }
 
     .form-label {
     font-weight: bold;
-    }
-
-    .loading {
-    text-align: center;
-    font-weight: bold;
-    font-size: xx-large;
     }
 
     .btn-success {
