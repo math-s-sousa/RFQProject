@@ -1,9 +1,9 @@
 <template>
-    <div>
+    <div class="m-2">
         <Loading v-if="loading" />
-        <div class="container mt-5 rounded">
+        <div class="container rounded">
             <div class="row">
-            <nav class="navbar bg-body-tertiary">
+            <nav class="navbar bg-body-tertiary rounded">
                 <div class="container-fluid justify-content-start">
                     <img src="../assets/img/logo.png" alt="Logo" width="180" height="45" class="d-inline-block align-text-top">
                     <span class="m-3" id="title">Cotação Online</span>
