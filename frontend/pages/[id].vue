@@ -4,11 +4,9 @@
         <div class="container mt-5 rounded">
             <div class="row">
             <nav class="navbar bg-body-tertiary">
-                <div class="container-fluid">
-                <a class="navbar-brand">
+                <div class="container-fluid justify-content-start">
                     <img src="../assets/img/logo.png" alt="Logo" width="180" height="45" class="d-inline-block align-text-top">
                     <span class="m-3" id="title">Cotação Online</span>
-                </a>
                 </div>
             </nav>
             </div>
@@ -24,37 +22,37 @@
                     </div>      
                 </div>
                 
-                <div class="row mt-1" id="lines">
-                <table class="table mt-1">
-                    <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Item</th>
-                        <th scope="col">Quantidade</th>
-                        <th scope="col">Preço Unitário</th>
-                        <th scope="col">Observações</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr v-for="line in Document.documentLines">
-                        <th scope="row">{{ line.visualOrder + 1 }}</th>
-                        <td>{{ line.itemDescription }}</td>
-                        <td><input class="form-control" type="number" min="1" step="any" v-model="line.quantity"></td>
-                        <td>
-                        <div class="input-group">
-                            <span class="input-group-text">{{ Document.docCurrency }}</span>
-                            <input class="form-control" type="number" min="1" step="any" v-model="line.unitPrice">
-                        </div>
-                        </td>
-                        <td><input class="form-control" type="text" v-model="line.freeText"></td>
-                    </tr>
-                    </tbody>
-                </table>
+                <div class="row mt-1 table-responsive" id="lines">
+                    <table class="table mt-1">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Item</th>
+                            <th scope="col">Quantidade</th>
+                            <th scope="col">Preço Unitário</th>
+                            <th scope="col">Observações</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="line in Document.documentLines">
+                            <th scope="row">{{ line.visualOrder + 1 }}</th>
+                            <td>{{ line.itemDescription }}</td>
+                            <td><input class="form-control" type="number" min="1" step="any" v-model="line.quantity"></td>
+                            <td>
+                            <div class="input-group">
+                                <span class="input-group-text">{{ Document.docCurrency }}</span>
+                                <input class="form-control" type="number" min="1" step="any" v-model="line.unitPrice">
+                            </div>
+                            </td>
+                            <td><input class="form-control" type="text" v-model="line.freeText"></td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
 
-                <div class="row d-flex justify-content-end" id="foot">
-                    <button type="button" class="btn btn-danger col-1 m-2">Cancelar</button>
-                    <button type="submit" class="btn btn-success col-1 m-2">Enviar</button>
+                <div id="foot">
+                    <button type="button" class="btn btn-danger m-2">Cancelar</button>
+                    <button type="submit" class="btn btn-success m-2">Enviar</button>
                 </div>
             </form>
         </div>
@@ -111,6 +109,10 @@
     #head, #lines {
     background-color: white;
     border-radius: 6px;
+    }
+
+    #foot {
+        text-align: end;
     }
 
     .form-label {
